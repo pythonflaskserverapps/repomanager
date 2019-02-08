@@ -4,10 +4,8 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-six = "*"
-slapi = "*"
-pygithub = "*"
 pyyaml = "*"
+pygithub = "*"
 
 [dev-packages]
 

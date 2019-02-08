@@ -1,12 +1,22 @@
 ###################################################
 
 import os
+import json
 import yaml
+import shutil
+import traceback
 
 ###################################################
 
 ###################################################
 # file utils
+def rmtree(path):
+    try:
+        print("removing directory {}".format(path))
+        shutil.rmtree(path)
+    except:        
+        print("could not remove directory {}".format(path))
+
 def create_dir(path, verbose = True):
 	if not os.path.exists(path):
 		os.makedirs(path)
@@ -16,9 +26,10 @@ def create_dir(path, verbose = True):
 		#print("{} exists".format(path))
 		pass
 
-def write_string_to_file(path, content, verbose = False):
-    with open(path,"w") as outfile:
-        outfile.write(content)
+def write_string_to_file(path, content, force = True, verbose = False):
+    if not os.path.exists(path) or force:
+        with open(path,"w") as outfile:
+            outfile.write(content)
     if verbose:
         print(f"written file { path } ( { len(str) } characters )")
 
@@ -42,10 +53,10 @@ def read_yaml_from_file(path, default):
 def write_json_to_file(path, obj, indent = 2):    
     json.dump(obj, open(path, "w"), indent = indent)
     
-def read_json_from_file(path, default):
+def read_json_from_file(path, default):    
     try:
-        obj = json.load(open(path))
+        obj = json.load(open(path))        
         return obj
-    except:
+    except:        
         return default
 ###################################################
