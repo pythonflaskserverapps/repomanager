@@ -83,6 +83,8 @@ parser.add_argument('--populate', help='populate repo')
 parser.add_argument('-c', "--commit", help='create commit')
 parser.add_argument("--name", help='commit name')
 parser.add_argument('-p', "--push", help='push')
+parser.add_argument("--createvenv", help='create virtual env')
+parser.add_argument("--installvenv", help='install virtual env')
 parser.add_argument('--force', action = "store_true", help='force')
 
 args = parser.parse_args()
@@ -164,4 +166,14 @@ if args.commit:
 if args.push:
     reponame = args.push        
     subprocess.Popen(["git", "push", "github", "master"], cwd = Path(repopath())).wait()
+
+if args.createvenv:
+    reponame = args.createvenv
+    configjson = readrepoconfigjson()
+    pythonpath = configjson["pythonpath"]
+    subprocess.Popen(["pipenv", "--python", Path(pythonpath)], cwd = Path(repopath())).wait()    
+
+if args.installvenv:
+    reponame = args.installvenv    
+    subprocess.Popen(["pipenv", "install"], cwd = Path(repopath())).wait()    
 
