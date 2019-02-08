@@ -90,6 +90,8 @@ parser.add_argument("--name", help='commit name')
 parser.add_argument('-p', "--push", help='push')
 parser.add_argument("--createvenv", help='create virtual env')
 parser.add_argument("--installvenv", help='install virtual env')
+parser.add_argument("--install", help='install virtual env')
+parser.add_argument("--module", help='module')
 parser.add_argument("--createdist", help='create dist')
 parser.add_argument("--twine", help='twine')
 parser.add_argument("--twinever", help='twine latest version')
@@ -119,7 +121,7 @@ if args.populate:
     if args.force:
         print("removing .git")
         rmtree(repofilepath(".git"))
-    subprocess.Popen(["git", "init"], cwd = Path(repopath())).wait()
+    subprocess.Popen(["git", "init"], cwd = str(Path(repopath()))).wait()
     configjson = readrepoconfigjson()        
     gituser = configjson["gituser"]
     gitpass = configjson["gitpass"]
@@ -168,42 +170,47 @@ if args.populate:
     except:
         print("github repo already exists")
     if args.force:        
-        subprocess.Popen(["git", "add", "."], cwd = Path(repopath())).wait()
-        subprocess.Popen(["git", "commit", "-m", "Initial commit"], cwd = Path(repopath())).wait()
-        subprocess.Popen(["git", "push", "github", "master"], cwd = Path(repopath())).wait()
+        subprocess.Popen(["git", "add", "."], cwd = str(Path(repopath()))).wait()
+        subprocess.Popen(["git", "commit", "-m", "Initial commit"], cwd = str(Path(repopath()))).wait()
+        subprocess.Popen(["git", "push", "github", "master"], cwd = str(Path(repopath()))).wait()
 
 if args.commit:
     reponame = args.commit
     commitname = args.name
-    subprocess.Popen(["git", "add", "."], cwd = Path(repopath())).wait()
-    subprocess.Popen(["git", "commit", "-m", commitname], cwd = Path(repopath())).wait()    
+    subprocess.Popen(["git", "add", "."], cwd = str(Path(repopath()))).wait()
+    subprocess.Popen(["git", "commit", "-m", commitname], cwd = str(Path(repopath()))).wait()    
 
 if args.push:
     reponame = args.push        
-    subprocess.Popen(["git", "push", "github", "master"], cwd = Path(repopath())).wait()
+    subprocess.Popen(["git", "push", "github", "master"], cwd = str(Path(repopath()))).wait()
 
 if args.createvenv:
     reponame = args.createvenv
     configjson = readrepoconfigjson()
     pythonpath = configjson["pythonpath"]
-    subprocess.Popen(["pipenv", "--python", str(Path(pythonpath))], cwd = Path(repopath())).wait()    
+    subprocess.Popen(["pipenv", "--python", str(Path(pythonpath))], cwd = str(Path(repopath()))).wait()    
 
 if args.installvenv:
     reponame = args.installvenv    
-    subprocess.Popen(["pipenv", "install"], cwd = Path(repopath())).wait()    
+    subprocess.Popen(["pipenv", "install"], cwd = str(Path(repopath()))).wait()    
+
+if args.install:
+    reponame = args.install    
+    module = args.module
+    subprocess.Popen(["pipenv", "install", module], cwd = str(Path(repopath()))).wait()    
 
 if args.createdist:
     reponame = args.createdist    
-    subprocess.Popen(["pipenv", "run", "python", "setup.py", "sdist", "bdist_wheel"], cwd = Path(repopath())).wait()    
+    subprocess.Popen(["pipenv", "run", "python", "setup.py", "sdist", "bdist_wheel"], cwd = str(Path(repopath()))).wait()    
 
 if args.twine:
     reponame = args.twine
-    subprocess.Popen(["pipenv", "run", "python", "-m", "twine", "upload", "dist/*"], cwd = Path(repopath())).wait()    
+    subprocess.Popen(["pipenv", "run", "python", "-m", "twine", "upload", "dist/*"], cwd = str(Path(repopath()))).wait()    
 
 if args.twinever:
     reponame = args.twinever
     curver = read_string_from_file(repofilepath("VER"), "0.0.1")
-    subprocess.Popen(["pipenv", "run", "python", "-m", "twine", "upload", "dist/{}-{}*".format(reponame, curver)], cwd = Path(repopath())).wait()    
+    subprocess.Popen(["pipenv", "run", "python", "-m", "twine", "upload", "dist/{}-{}*".format(reponame, curver)], cwd = str(Path(repopath()))).wait()    
 
 if args.setup:
     reponame = args.setup
