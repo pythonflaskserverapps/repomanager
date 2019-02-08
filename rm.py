@@ -92,6 +92,7 @@ parser.add_argument("--createvenv", help='create virtual env')
 parser.add_argument("--installvenv", help='install virtual env')
 parser.add_argument("--createdist", help='create dist')
 parser.add_argument("--twine", help='twine')
+parser.add_argument("--twinever", help='twine latest version')
 parser.add_argument("--setup", help='open setup')
 parser.add_argument("--code", help='open with vscode')
 parser.add_argument("--updatever", help='update version')
@@ -196,6 +197,11 @@ if args.twine:
     reponame = args.twine
     subprocess.Popen(["pipenv", "run", "python", "-m", "twine", "upload", "dist/*"], cwd = Path(repopath())).wait()    
 
+if args.twinever:
+    reponame = args.twinever
+    curver = read_string_from_file(repofilepath("VER"), "0.0.1")
+    subprocess.Popen(["pipenv", "run", "python", "-m", "twine", "upload", "dist/{}-{}*".format(reponame, curver)], cwd = Path(repopath())).wait()    
+
 if args.setup:
     reponame = args.setup
     path = str(Path("repos/{}.json".format(reponame)))    
@@ -225,4 +231,5 @@ if args.updatever:
     setuppy = read_string_from_file(repofilepath("setup.py"), "")
     newsetuppy = setuppy.replace("version='{}'".format(curver), "version='{}'".format(ver))
     write_string_to_file(repofilepath("setup.py"), newsetuppy)
+    write_string_to_file(repofilepath("VER"), ver)
 
