@@ -94,6 +94,8 @@ parser.add_argument("--createdist", help='create dist')
 parser.add_argument("--twine", help='twine')
 parser.add_argument("--setup", help='open setup')
 parser.add_argument("--code", help='open with vscode')
+parser.add_argument("--updatever", help='update version')
+parser.add_argument("--ver", help='version')
 parser.add_argument('--force', action = "store_true", help='force')
 
 args = parser.parse_args()
@@ -207,3 +209,20 @@ if args.code:
     configjson = readrepoconfigjson()
     idepath = str(Path(configjson["idepath"]))
     subprocess.Popen([idepath, "."], cwd = str(Path(repopath())))
+
+if args.updatever:
+    reponame = args.updatever
+    ver = args.ver
+    print("updating {} version to {}".format(reponame, ver))
+    metayaml = read_string_from_file(repofilepath("meta.yaml"), "")
+    parts = metayaml.split("version:")
+    parts = parts[1].split('"')
+    curver = parts[1]
+    print("current version", curver)
+    newmetayaml = metayaml.replace('version: "{}"'.format(curver), 'version: "{}"'.format(ver))
+    newmetayaml = newmetayaml.replace('git_rev: v{}'.format(curver), 'git_rev: v{}'.format(ver))    
+    write_string_to_file(repofilepath("meta.yaml"), newmetayaml)
+    setuppy = read_string_from_file(repofilepath("setup.py"), "")
+    newsetuppy = setuppy.replace("version='{}'".format(curver), "version='{}'".format(ver))
+    write_string_to_file(repofilepath("setup.py"), newsetuppy)
+
