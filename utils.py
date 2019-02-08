@@ -15,6 +15,7 @@ def rmtree(path):
         print("removing directory {}".format(path))
         shutil.rmtree(path)
     except:        
+        #traceback.print_exc()
         print("could not remove directory {}".format(path))
 
 def create_dir(path, verbose = True):

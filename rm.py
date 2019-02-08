@@ -43,6 +43,12 @@ def creategitconfig(gituser, gitmail, reponame):
     template = template.replace("${reponame}", reponame)
     return template
 
+def createreadme(title, description):
+    template = read_string_from_file("README.md.template", "")
+    template = template.replace("${title}", title)
+    template = template.replace("${description}", description)
+    return template
+
 def readrepoconfigjson(name = None):    
     return read_json_from_file(repoconfigpath(name), {})
 
@@ -83,11 +89,19 @@ if args.populate:
     gituser = configjson["gituser"]
     gitpass = configjson["gitpass"]
     gitmail = configjson["gitmail"]
+    project = configjson["project"]
+    projectTitle = project["title"]
+    projectDescription = project["description"]
+    projectShortDescription = project["shortDescription"]
     gitconfig = creategitconfig(gituser, gitmail, reponame)
     write_string_to_file(repofilepath(".git/config"), gitconfig)
     print("written gitconfig")
     write_string_to_file(repofilepath(".gitignore"), read_string_from_file("gitignoretemplate", ""), force = args.force)    
     print("written .gitignore")
+    write_string_to_file(repofilepath("README.md"), createreadme(projectTitle, projectDescription), force = args.force)    
+    print("written README.md")
+    write_string_to_file(repofilepath("LICENSE"), read_string_from_file("LICENSE.template", ""), force = args.force)    
+    print("written LICENSE")
     g = Github(gituser, gitpass)
     u = g.get_user()
     if args.force:
@@ -97,7 +111,7 @@ if args.populate:
         except:
             print("github repo does not exist")
     try:
-        u.create_repo(reponame)
+        u.create_repo(reponame, description = projectShortDescription)
         print("created github repo")
     except:
         print("github repo already exists")

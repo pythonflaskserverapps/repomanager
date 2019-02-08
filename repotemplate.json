@@ -1,5 +1,10 @@
 {
     "gituser": "pythonflaskserverapps",
     "gitpass": "",
-    "gitmail": "pythonflaskserverapps@gmail.com"
+    "gitmail": "pythonflaskserverapps@gmail.com",
+    "project": {
+        "title": "Test project",
+        "shortDescription": "test project",
+        "description": "Test project."
+    }
 }
