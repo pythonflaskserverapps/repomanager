@@ -49,6 +49,11 @@ def createreadme(title, description):
     template = template.replace("${description}", description)
     return template
 
+def creategitignore(reponame):
+    template = read_string_from_file("gitignore.template", "")
+    template = template.replace("${reponame}", reponame)    
+    return template
+
 def createmetayaml(gituser, reponame):
     template = read_string_from_file("meta.yaml.template", "")
     template = template.replace("${gituser}", gituser)
@@ -87,6 +92,8 @@ parser.add_argument("--createvenv", help='create virtual env')
 parser.add_argument("--installvenv", help='install virtual env')
 parser.add_argument("--createdist", help='create dist')
 parser.add_argument("--twine", help='twine')
+parser.add_argument("--setup", help='open setup')
+parser.add_argument("--code", help='open with vscode')
 parser.add_argument('--force', action = "store_true", help='force')
 
 args = parser.parse_args()
@@ -120,7 +127,7 @@ if args.populate:
     gitconfig = creategitconfig(gituser, gitmail, reponame)
     write_string_to_file(repofilepath(".git/config"), gitconfig)
     print("written gitconfig")
-    write_string_to_file(repofilepath(".gitignore"), read_string_from_file("gitignoretemplate", ""), force = args.force)    
+    write_string_to_file(repofilepath(".gitignore"), creategitignore(reponame), force = args.force)    
     print("written .gitignore")
     write_string_to_file(repofilepath("README.md"), createreadme(projectTitle, projectDescription), force = args.force)    
     print("written README.md")
@@ -186,3 +193,17 @@ if args.createdist:
 if args.twine:
     reponame = args.twine
     subprocess.Popen(["pipenv", "run", "python", "-m", "twine", "upload", "dist/*"], cwd = Path(repopath())).wait()    
+
+if args.setup:
+    reponame = args.setup
+    path = str(Path("repos/{}.json".format(reponame)))    
+    configjson = readrepoconfigjson()
+    idepath = str(Path(configjson["idepath"]))
+    print("opening", path, "with", idepath)
+    subprocess.Popen([idepath, path])
+
+if args.code:
+    reponame = args.code
+    configjson = readrepoconfigjson()
+    idepath = str(Path(configjson["idepath"]))
+    subprocess.Popen([idepath, "."], cwd = str(Path(repopath())))
