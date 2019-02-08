@@ -97,6 +97,7 @@ parser.add_argument("--setup", help='open setup')
 parser.add_argument("--code", help='open with vscode')
 parser.add_argument("--updatever", help='update version')
 parser.add_argument("--ver", help='version')
+parser.add_argument("--createrelease", help='create release')
 parser.add_argument('--force', action = "store_true", help='force')
 
 args = parser.parse_args()
@@ -151,6 +152,8 @@ if args.populate:
     print("written setup.py")
     write_string_to_file(repofilepath("travis_test.py"), createtravistest(reponame), force = args.force)    
     print("written travis test")
+    write_string_to_file(repofilepath("VER"), "0.0.1", force = args.force)
+    print("written version")
     g = Github(gituser, gitpass)
     u = g.get_user()
     if args.force:
@@ -233,3 +236,16 @@ if args.updatever:
     write_string_to_file(repofilepath("setup.py"), newsetuppy)
     write_string_to_file(repofilepath("VER"), ver)
 
+if args.createrelease:
+    reponame = args.createrelease
+    ver = read_string_from_file(repofilepath("VER"), "0.0.1")
+    tag = "v" + ver
+    print("creating release {} for {}".format(ver, reponame))
+    configjson = readrepoconfigjson()        
+    gituser = configjson["gituser"]
+    gitpass = configjson["gitpass"]
+    g = Github(gituser, gitpass)
+    u = g.get_user()
+    r = u.get_repo(reponame)
+    r.create_git_release(tag, "release " + tag, "release " + tag)
+    print("git release created")
