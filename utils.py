@@ -35,11 +35,11 @@ def write_string_to_file(path, content, force = True, verbose = False):
         print(f"written file { path } ( { len(str) } characters )")
 
 def read_string_from_file(path, default):
-	try:
-		content = open(path).read()
-		return content
-	except:
-		return default
+        try:
+                content = open(path).read()
+                return content
+        except:
+                return default
 
 def write_yaml_to_file(path, obj):
     yaml.dump(obj, open(path, "w"))

@@ -49,6 +49,26 @@ def createreadme(title, description):
     template = template.replace("${description}", description)
     return template
 
+def createmetayaml(gituser, reponame):
+    template = read_string_from_file("meta.yaml.template", "")
+    template = template.replace("${gituser}", gituser)
+    template = template.replace("${reponame}", reponame)
+    return template
+
+def createsetuppy(gituser, gitmail, reponame, projectShortDescription, projectDescription):
+    template = read_string_from_file("setup.py.template", "")
+    template = template.replace("${gituser}", gituser)
+    template = template.replace("${gitmail}", gitmail)
+    template = template.replace("${reponame}", reponame)
+    template = template.replace("${projectDescription}", projectDescription)
+    template = template.replace("${projectShortDescription}", projectShortDescription)
+    return template
+
+def createtravistest(reponame):
+    template = read_string_from_file("travistest.template", "")    
+    template = template.replace("${reponame}", reponame)
+    return template
+
 def readrepoconfigjson(name = None):    
     return read_json_from_file(repoconfigpath(name), {})
 
@@ -102,6 +122,21 @@ if args.populate:
     print("written README.md")
     write_string_to_file(repofilepath("LICENSE"), read_string_from_file("LICENSE.template", ""), force = args.force)    
     print("written LICENSE")
+    write_string_to_file(repofilepath("bld.bat"), read_string_from_file("bld.bat.template", ""), force = args.force)    
+    write_string_to_file(repofilepath("build.sh"), read_string_from_file("build.sh.template", ""), force = args.force)    
+    print("written PyPi build files")
+    create_dir(repofilepath(reponame))
+    write_string_to_file(repofilepath(reponame + "/__init__.py"), read_string_from_file("initpy.template", ""))
+    print("created package dir")
+    write_string_to_file(repofilepath("Pipfile"), read_string_from_file("Pipfile.template", ""), force = args.force)    
+    write_string_to_file(repofilepath("Pipfile.lock"), read_string_from_file("Pipfile.lock.template", ""), force = args.force)    
+    print("written pipfiles")
+    write_string_to_file(repofilepath("meta.yaml"), createmetayaml(gituser, reponame), force = args.force)    
+    print("written meta.yaml")
+    write_string_to_file(repofilepath("setup.py"), createsetuppy(gituser, gitmail, reponame, projectShortDescription, projectDescription), force = args.force)    
+    print("written setup.py")
+    write_string_to_file(repofilepath("travis_test.py"), createtravistest(reponame), force = args.force)    
+    print("written travis test")
     g = Github(gituser, gitpass)
     u = g.get_user()
     if args.force:

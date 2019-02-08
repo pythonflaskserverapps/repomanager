@@ -1,0 +1,33 @@
+from setuptools import setup
+from ${reponame} import read_string_from_file
+
+setup(name='${reponame}',
+      version='0.0.1',
+      author='${gituser}',
+      author_email='${gitmail}',
+      description='${projectShortDescription}',
+      long_description=read_string_from_file("README.md", "${projectDescription}"),
+      long_description_content_type='text/markdown',
+      license='MIT',
+      keywords="${projectShortDescription}",
+      url='https://github.com/${gituser}/${reponame}',            
+      packages=['${reponame}'],
+      test_suite="travis_test",
+      python_requires=">=3.6",
+      install_requires=[                
+      ],
+      classifiers=[
+        "Development Status :: 5 - Production/Stable",
+        "Intended Audience :: Developers",
+        "Programming Language :: Python :: 3",        
+        "Programming Language :: Python :: 3.6"
+      ],
+      entry_points={
+        'console_scripts': []
+      },
+      package_dir={
+        '${reponame}': '${reponame}'
+      },
+      include_package_data=False,
+      zip_safe=False)
+
