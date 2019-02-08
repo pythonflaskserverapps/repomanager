@@ -52,8 +52,11 @@ create_dir("repos")
 
 parser = argparse.ArgumentParser(description='Manage repos')
 
-parser.add_argument('-c', '--create', help='create repo')
-parser.add_argument('-p', '--populate', help='create repo')
+parser.add_argument('--create', help='create repo')
+parser.add_argument('--populate', help='populate repo')
+parser.add_argument('-c', "--commit", help='create commit')
+parser.add_argument("--name", help='commit name')
+parser.add_argument('-p', "--push", help='push')
 parser.add_argument('--force', action = "store_true", help='force')
 
 args = parser.parse_args()
@@ -102,3 +105,14 @@ if args.populate:
         subprocess.Popen(["git", "add", "."], cwd = Path(repopath())).wait()
         subprocess.Popen(["git", "commit", "-m", "Initial commit"], cwd = Path(repopath())).wait()
         subprocess.Popen(["git", "push", "github", "master"], cwd = Path(repopath())).wait()
+
+if args.commit:
+    reponame = args.commit
+    commitname = args.name
+    subprocess.Popen(["git", "add", "."], cwd = Path(repopath())).wait()
+    subprocess.Popen(["git", "commit", "-m", commitname], cwd = Path(repopath())).wait()    
+
+if args.push:
+    reponame = args.push        
+    subprocess.Popen(["git", "push", "github", "master"], cwd = Path(repopath())).wait()
+
